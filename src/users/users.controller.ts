@@ -24,7 +24,11 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    // curl -X POST http://localhost:3000/users -H
+    // "Content-Type: application/json" -d '{"name":"nnnaaames", "email":"my@email.com"}'
+    const { name, email } = createUserDto;
+    return `유저를 생성했습니다. 이름 : ${name}, 이메일 : ${email}`;
+    // return this.usersService.create(createUserDto);
   }
 
   @Get()
