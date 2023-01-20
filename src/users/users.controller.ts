@@ -1,84 +1,31 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Header,
-  HttpCode,
-  Param,
-  Patch,
-  Post,
-  Query,
-  Redirect,
-  Res,
-} from '@nestjs/common';
-
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersService } from './users.service';
+import { UserLoginDto } from './dto/user-login.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
+import { UserInfo } from './UserInfo';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    // curl -X POST http://localhost:3000/users -H
-    // "Content-Type: application/json" -d '{"name":"nnnaaames", "email":"my@email.com"}'
-    const { name, email } = createUserDto;
-    return `유저를 생성했습니다. 이름 : ${name}, 이메일 : ${email}`;
-    // return this.usersService.create(createUserDto);
+  async createUser(@Body() dto: CreateUserDto): Promise<void> {
+    console.log(dto);
   }
 
-  @Get()
-  findAll(@Res() res) {
-    const users = this.usersService.findAll();
-    return res.status(200).send(users);
+  @Post('/email-verify')
+  async verifyEmail(@Query() dto: VerifyEmailDto): Promise<string> {
+    console.log(dto);
+    return;
   }
 
-  @Redirect('https://nestjs.com', 301)
-  @Header('Custom', 'Test Header')
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    if (+id < 1) {
-      throw new BadRequestException('id는 0보다 믄 값이어야 합니다.');
-    }
-
-    return this.usersService.findOne(+id);
+  @Post('/login')
+  async login(@Body() dto: UserLoginDto): Promise<string> {
+    console.log(dto);
+    return;
   }
 
-  @HttpCode(202)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
-
-  // 라우트 매개변수1
-  @Delete(':userId/memo/:memoId')
-  deleteUserMemo(@Param() params: { [key: string]: string }) {
-    return `userId: ${params.userId}, memoId: ${params.memoId}`;
-  }
-
-  // 라우트 매개변수2
-  @Delete(':userId/memo/:memoId')
-  deletUserMemo(
-    @Param('userId') userId: string,
-    @Param('memoId') memoId: string,
-  ) {
-    return `userId: ${userId}, memoId: ${memoId}`;
-  }
-
-  @Get('redirect/docs')
-  @Redirect('https://docs.nestjs.com', 302)
-  getDocs(@Query('version') version) {
-    if (version && version === '5') {
-      return { url: 'https://docs.nestjs.com/v5/' };
-    }
+  @Get('/:id')
+  async getUserInfo(@Param('id') userId: string): Promise<UserInfo> {
+    console.log(userId);
+    return;
   }
 }
