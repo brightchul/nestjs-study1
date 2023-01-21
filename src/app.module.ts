@@ -8,6 +8,7 @@ import { EmailService } from './email/email.service';
 import { ConfigModule } from '@nestjs/config';
 import { UsersService } from './users/users.service';
 import { CoreModule } from './core.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,8 +16,9 @@ import { CoreModule } from './core.module';
       isGlobal: true,
     }),
     CoreModule,
+    UsersModule,
   ],
-  controllers: [ApiController, AppController, UsersController],
-  providers: [AppService, UsersService, EmailService],
+  controllers: [ApiController, AppController],
+  providers: [AppService],
 })
 export class AppModule {}
