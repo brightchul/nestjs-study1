@@ -12,4 +12,9 @@ curl -X POST http://localhost:3000/users/login -H "content-Type: application/jso
 
 # GET user-id
 echo "GET user-id"
- curl -X GET http://localhost:3000/users/user-id
+curl -X GET http://localhost:3000/users/user-id
+
+
+# send user signup mail
+echo "send user signup mail"
+curl http://localhost:3000/users -H "Content-Type: application/json" -X POST -d '{"name":"USER_NAME","email":"YOU_EMAIL@EMAIL.com", "password":""}'
