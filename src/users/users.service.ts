@@ -1,10 +1,10 @@
+import { DataSource, Repository } from 'typeorm';
+import { ulid } from 'ulid';
+import * as uuid from 'uuid';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EmailService } from 'src/email/email.service';
-import { Repository } from 'typeorm';
-import { ulid } from 'ulid';
-import * as uuid from 'uuid';
 import { UserEntity } from './user.entity';
 import { UserInfo } from './UserInfo';
 
@@ -12,6 +12,7 @@ import { UserInfo } from './UserInfo';
 export class UsersService {
   constructor(
     private emailService: EmailService,
+    private datasource: DataSource,
 
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
@@ -44,19 +45,25 @@ export class UsersService {
         '해당 이메일로는 가입할 수 없습니다.',
       );
     }
-
-    const signupVerifyToken = uuid.v1();
-    await this.saveUser(name, email, password, signupVerifyToken);
-    await this.sendMemberJoinEmail(email, signupVerifyToken);
+    try {
+      const signupVerifyToken = uuid.v1();
+      await this.saveUserWithTransaction(
+        name,
+        email,
+        password,
+        signupVerifyToken,
+      );
+      await this.sendMemberJoinEmail(email, signupVerifyToken);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  // TODO: DB 연동 후 구현
   private async checkUserExists(email: string) {
     const user = await this.userRepository.findOne({ where: { email } });
-    return user !== undefined;
+    return user !== null;
   }
 
-  // TODO: DB 연동 후 구현
   private async saveUser(
     name: string,
     email: string,
@@ -71,6 +78,24 @@ export class UsersService {
     user.signupVerifyToken = signupVerifyToken;
 
     await this.userRepository.save(user);
+  }
+
+  private async saveUserWithTransaction(
+    name: string,
+    email: string,
+    password: string,
+    signupVerifyToken: string,
+  ): Promise<void> {
+    await this.datasource.transaction(async (manager) => {
+      const user = new UserEntity();
+      user.id = ulid();
+      user.name = name;
+      user.email = email;
+      user.password = password;
+      user.signupVerifyToken = signupVerifyToken;
+
+      await manager.save(user);
+    });
   }
 
   private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {
