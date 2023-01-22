@@ -15,7 +15,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // 전역으로 설정할때 사용하는 방법
-  app.useGlobalPipes(new ValidationPipe());
+  // class-transformer 적용하기 위해 true 설정
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   await app.listen(3000);
 }
