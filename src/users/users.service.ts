@@ -1,12 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { EmailService } from 'src/email/email.service';
+import { Repository } from 'typeorm';
+import { ulid } from 'ulid';
 import * as uuid from 'uuid';
+import { UserEntity } from './user.entity';
 import { UserInfo } from './UserInfo';
 
 @Injectable()
 export class UsersService {
-  constructor(private emailService: EmailService) {}
+  constructor(
+    private emailService: EmailService,
+
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+  ) {}
 
   async getUserInfo(userId: string): Promise<UserInfo> {
     // 1. userId를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
@@ -30,26 +39,38 @@ export class UsersService {
   }
 
   async createUser(name: string, email: string, password: string) {
-    await this.checkUserExists(email);
-    const signupVerifyToken = uuid.v1();
+    if (await this.checkUserExists(email)) {
+      throw new UnprocessableEntityException(
+        '해당 이메일로는 가입할 수 없습니다.',
+      );
+    }
 
+    const signupVerifyToken = uuid.v1();
     await this.saveUser(name, email, password, signupVerifyToken);
     await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
 
   // TODO: DB 연동 후 구현
-  private checkUserExists(email: string) {
-    return false;
+  private async checkUserExists(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    return user !== undefined;
   }
 
   // TODO: DB 연동 후 구현
-  private saveUser(
+  private async saveUser(
     name: string,
     email: string,
     password: string,
     signupVerifyToken: string,
   ) {
-    return;
+    const user = new UserEntity();
+    user.id = ulid();
+    user.name = name;
+    user.email = email;
+    user.password = password;
+    user.signupVerifyToken = signupVerifyToken;
+
+    await this.userRepository.save(user);
   }
 
   private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {
