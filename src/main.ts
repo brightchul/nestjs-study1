@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { logger3 } from './middleware/logger.middleware';
 
 // import * as dotenv from 'dotenv';
 // import * as path from 'path';
@@ -13,6 +14,9 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // 전역으로 미들웨어를 적용하기 위함
+  app.use(logger3);
 
   // 전역으로 설정할때 사용하는 방법
   // class-transformer 적용하기 위해 true 설정
