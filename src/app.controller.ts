@@ -1,8 +1,11 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
 import { CommonService } from './common.service';
+import { AuthGuard } from './guards/canactive.guard';
 
+// 가드 적용 컨트롤러 레벨
+@UseGuards(AuthGuard)
 @Controller()
 export class AppController {
   constructor(
@@ -11,6 +14,8 @@ export class AppController {
     private readonly configService: ConfigService,
   ) {}
 
+  // 가드 적용 메서드 레벨
+  @UseGuards(AuthGuard)
   @Get()
   getHello(): string {
     return (

@@ -5,6 +5,7 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { getEnvPath } from 'src/config/env';
@@ -14,6 +15,7 @@ import { AppService } from './app.service';
 import emailConfig from './config/emailConfig';
 import { validationSchema } from './config/validationSchema';
 import { CoreModule } from './core.module';
+import { AuthGuard } from './guards/canactive.guard';
 import {
   LoggerMiddleware,
   LoggerMiddleware2,
@@ -43,7 +45,14 @@ import { UsersModule } from './users/users.module';
     }),
   ],
   controllers: [ApiController, AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // 10.2 가드에 종속성 주입을 사용해서 다른 프로바이더를 주입시 커스텀 프로바이더로 선언
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
