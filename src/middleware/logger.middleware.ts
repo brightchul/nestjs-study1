@@ -7,3 +7,10 @@ export class LoggerMiddleware implements NestMiddleware {
     next();
   }
 }
+
+export class LoggerMiddleware2 implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
+    console.log('Request...');
+    next();
+  }
+}

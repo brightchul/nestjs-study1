@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -9,7 +14,11 @@ import { AppService } from './app.service';
 import emailConfig from './config/emailConfig';
 import { validationSchema } from './config/validationSchema';
 import { CoreModule } from './core.module';
-import { LoggerMiddleware } from './middleware/logger.middleware';
+import {
+  LoggerMiddleware,
+  LoggerMiddleware2,
+} from './middleware/logger.middleware';
+import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -38,6 +47,12 @@ import { UsersModule } from './users/users.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('/users');
+    // apply에 미들웨어 여러개 추가 가능
+    // consumer.apply(LoggerMiddleware, LoggerMiddleware2).forRoutes('/users');
+    // 아래처럼 Controller Class도 가능
+    consumer
+      .apply(LoggerMiddleware, LoggerMiddleware2)
+      .exclude({ path: '/users/hello', method: RequestMethod.GET }) // 제외할 라우팅 경로
+      .forRoutes(UsersController);
   }
 }
