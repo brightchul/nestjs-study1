@@ -5,17 +5,16 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { getEnvPath } from 'src/config/env';
 import { ApiController } from './api/api.controller';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import authConfig from './config/authConfig';
 import emailConfig from './config/emailConfig';
 import { validationSchema } from './config/validationSchema';
 import { CoreModule } from './core.module';
-import { AuthGuard } from './guards/canactive.guard';
 import {
   LoggerMiddleware,
   LoggerMiddleware2,
@@ -25,14 +24,14 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
+    CoreModule,
+    UsersModule,
     ConfigModule.forRoot({
       envFilePath: [getEnvPath()],
-      load: [emailConfig],
+      load: [emailConfig, authConfig],
       isGlobal: true,
       validationSchema,
     }),
-    CoreModule,
-    UsersModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
