@@ -32,7 +32,6 @@ export class CreateUserDto {
     message: 'password는 name과 같은 문자열을 포함할 수 없습니다',
   })
   @Transform((params) => {
-    console.log(params);
     return params.value;
   })
   @IsString()

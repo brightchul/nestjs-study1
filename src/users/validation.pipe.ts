@@ -15,9 +15,6 @@ export class ValidationPipe implements PipeTransform<any> {
     }
 
     const object = plainToClass(metatype, value);
-
-    console.log('plainToClass : ', object);
-
     const errors = await validate(object);
 
     if (errors.length > 0) {
