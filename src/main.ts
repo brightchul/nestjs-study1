@@ -17,7 +17,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // 전역으로 미들웨어를 적용하기 위함
-  app.use(logger3);
+  // app.use(logger3);
 
   // 가드 전역 레벨로 적용
   // app.useGlobalGuards(new AuthGuard());
