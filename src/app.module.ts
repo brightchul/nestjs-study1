@@ -15,6 +15,7 @@ import authConfig from './config/authConfig';
 import emailConfig from './config/emailConfig';
 import { validationSchema } from './config/validationSchema';
 import { CoreModule } from './core.module';
+import { ExceptionModule } from './exception/exception.module';
 import {
   LoggerMiddleware,
   LoggerMiddleware2,
@@ -42,6 +43,7 @@ import { UsersModule } from './users/users.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: process.env.DB_SYNCHRONIZE === 'true', // 구동시 소스코드 기반 동기화할지 여부,  prod는 금지
     }),
+    ExceptionModule,
   ],
   controllers: [ApiController, AppController],
   providers: [
