@@ -2,7 +2,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AuthGuard } from './auth/auth.guard';
+import { ErrorsInterceptor } from './interceptor/errors.interceptor';
 import { LogginInterceptor } from './interceptor/logging.interceptor';
+import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { logger3 } from './middleware/logger.middleware';
 
 // import * as dotenv from 'dotenv';
@@ -28,7 +30,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   // 전역으로 interceptor 적용
-  app.useGlobalInterceptors(new LogginInterceptor());
+  app.useGlobalInterceptors(
+    new LogginInterceptor(),
+    new TransformInterceptor(),
+    // new ErrorsInterceptor(),   // 모든 에러에 대한 인터셉터, 예외 필터에서 다루는게 더 나을수 있다.
+  );
 
   await app.listen(3000);
 }
