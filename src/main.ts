@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AuthGuard } from './auth/auth.guard';
+import { LogginInterceptor } from './interceptor/logging.interceptor';
 import { logger3 } from './middleware/logger.middleware';
 
 // import * as dotenv from 'dotenv';
@@ -25,6 +26,9 @@ async function bootstrap() {
   // 전역으로 설정할때 사용하는 방법
   // class-transformer 적용하기 위해 true 설정
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+  // 전역으로 interceptor 적용
+  app.useGlobalInterceptors(new LogginInterceptor());
 
   await app.listen(3000);
 }
