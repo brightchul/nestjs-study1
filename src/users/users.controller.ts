@@ -1,16 +1,33 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Headers,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthService } from 'src/auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UserInfo } from './UserInfo';
 import { UsersService } from './users.service';
+import { ValidationPipe } from './validation.pipe';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
 
+  // 커스텀 ValidationPipe적용하는 방법
+  // async createUser(@Body(ValidationPipe) dto: CreateUserDto): Promise<void> {
   @Post()
-  async createUser(@Body() dto: CreateUserDto): Promise<void> {
+  async createUser(@Body(ValidationPipe) dto: CreateUserDto): Promise<void> {
     const { name, email, password } = dto;
     await this.usersService.createUser(name, email, password);
   }
@@ -28,8 +45,17 @@ export class UsersController {
     return await this.usersService.login(email, password);
   }
 
+  // @Get('/:id')
+  // async getUserInfo(@Param('id') userId: string): Promise<UserInfo> {
+  //   return await this.usersService.getUserInfo(userId);
+  // }
+
+  @UseGuards(AuthGuard)
   @Get('/:id')
-  async getUserInfo(@Param('id') userId: string): Promise<UserInfo> {
+  async getUserInfo(
+    @Headers() headers: any,
+    @Param('id') userId: string,
+  ): Promise<UserInfo> {
     return await this.usersService.getUserInfo(userId);
   }
 }
