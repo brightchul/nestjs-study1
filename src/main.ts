@@ -31,7 +31,7 @@ async function bootstrap() {
 
   // 전역으로 interceptor 적용
   app.useGlobalInterceptors(
-    new LogginInterceptor(),
+    // new LogginInterceptor(),
     new TransformInterceptor(),
     // new ErrorsInterceptor(),   // 모든 에러에 대한 인터셉터, 예외 필터에서 다루는게 더 나을수 있다.
   );
