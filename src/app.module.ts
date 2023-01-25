@@ -46,6 +46,7 @@ import { InterceptorModule } from './interceptor/interceptor.module';
     }),
     ExceptionModule,
     InterceptorModule,
+ 
   ],
   controllers: [ApiController, AppController],
   providers: [
