@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, NotFoundException, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
 import { CommonService } from './common.service';

@@ -22,6 +22,7 @@ import {
 } from './middleware/logger.middleware';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
+import { InterceptorModule } from './interceptor/interceptor.module';
 
 @Module({
   imports: [
@@ -44,6 +45,8 @@ import { UsersModule } from './users/users.module';
       synchronize: process.env.DB_SYNCHRONIZE === 'true', // 구동시 소스코드 기반 동기화할지 여부,  prod는 금지
     }),
     ExceptionModule,
+    InterceptorModule,
+ 
   ],
   controllers: [ApiController, AppController],
   providers: [
