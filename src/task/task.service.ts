@@ -1,9 +1,31 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, Interval, Timeout, CronExpression } from '@nestjs/schedule';
+import { CronJob } from 'cron';
+import {
+  Cron,
+  Interval,
+  Timeout,
+  CronExpression,
+  SchedulerRegistry,
+} from '@nestjs/schedule';
 
 @Injectable()
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);
+
+  constructor(private schedulerRegistry: SchedulerRegistry) {
+    this.addCrone();
+  }
+
+  addCrone() {
+    const name = 'cronSample';
+    const job = new CronJob('* * * * * *', () => {
+      this.logger.warn(`run! ${name}`);
+    });
+
+    // 크론잡 하나를 schedulerRegistry에 추가한다. 하지만 이것은 태스크 스케줄링을 등록하는것이 아니다.
+    this.schedulerRegistry.addCronJob(name, job);
+    this.logger.warn(`job ${name} added!!!!`);
+  }
 
   @Cron('* * * * * *', { name: 'cronTask' })
   handleCron() {
