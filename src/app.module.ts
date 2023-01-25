@@ -23,6 +23,7 @@ import {
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { InterceptorModule } from './interceptor/interceptor.module';
+import { BatchModule } from './batch/batch.module';
 
 @Module({
   imports: [
@@ -46,7 +47,7 @@ import { InterceptorModule } from './interceptor/interceptor.module';
     }),
     ExceptionModule,
     InterceptorModule,
- 
+    BatchModule,
   ],
   controllers: [ApiController, AppController],
   providers: [
